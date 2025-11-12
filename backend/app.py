@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)
 
 # SQLite database setup
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tags.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root!123@localhost/tags_trees'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
