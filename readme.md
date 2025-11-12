@@ -35,7 +35,7 @@ Built with **React (frontend)** + **Flask (backend)** + **MySQL (database)**.
 git clone https://github.com/pnarun/nested-tags-tree-manager.git
 cd nested-tags-tree-manager
 
-🗄️ 2. Backend setup (Flask)
+### 🗄️ 2. Backend setup (Flask)
 
 cd backend
 python -m venv venv
@@ -61,7 +61,7 @@ python app.py
 
 Backend runs on http://127.0.0.1:5000
 
-💻 3. Frontend setup (React)
+### 💻 3. Frontend setup (React)
 
 Open another terminal:
 
@@ -70,6 +70,29 @@ npm install
 npm start
 
 Frontend runs on http://localhost:3000
+
+### 🧩 API Endpoints
+Method	Endpoint	Description
+GET	/api/trees	Fetch all root-level trees
+POST	/api/trees/add	Add new tree
+PUT	/api/tags/<id>	Update existing tree
+DELETE	/api/tags/<id>	Delete a tree
+GET	/api/tags	(optional future use)
+🧰 Example JSON Output
+{
+  "name": "root",
+  "children": [
+    {
+      "name": "child1",
+      "children": [
+        { "name": "child1-child1", "data": "c1-c1 Hello" },
+        { "name": "child1-child2", "data": "c1-c2 JS" }
+      ]
+    },
+    { "name": "child2", "data": "c2 World" }
+  ]
+}
+
 
 ### Screenshots of this APP
 <img width="1920" height="1080" alt="App load page" src="https://github.com/user-attachments/assets/06de1886-ba4e-4045-a459-daf11ea302c1" />
@@ -96,31 +119,3 @@ Frontend runs on http://localhost:3000
 
 <img width="1920" height="1080" alt="Final app page" src="https://github.com/user-attachments/assets/1d8f5cd0-5f3a-4115-9aa8-3dec33ec0d88" />
 
-🧩 API Endpoints
-Method	Endpoint	Description
-GET	/api/trees	Fetch all root-level trees
-POST	/api/trees/add	Add new tree
-PUT	/api/tags/<id>	Update existing tree
-DELETE	/api/tags/<id>	Delete a tree
-GET	/api/tags	(optional future use)
-🧰 Example JSON Output
-{
-  "name": "root",
-  "children": [
-    {
-      "name": "child1",
-      "children": [
-        { "name": "child1-child1", "data": "c1-c1 Hello" },
-        { "name": "child1-child2", "data": "c1-c2 JS" }
-      ]
-    },
-    { "name": "child2", "data": "c2 World" }
-  ]
-}
-
-🧑‍💻 Author
-
-Arun P N
-📧 [arunpn866@gmail.om]
-🌐 [https://www.linkedin.ocm/in/pnarun]
-💼 [https://www.github.com/pnarun]
