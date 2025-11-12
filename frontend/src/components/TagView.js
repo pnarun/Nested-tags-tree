@@ -1,40 +1,26 @@
 import React, { useState } from "react";
 
-const TagView = ({ node, onChange }) => {
-  const [collapsed, setCollapsed] = useState(false);
+const TagView = ({ node, onChange, collapsed: collapsedProp = false }) => {
+  const [collapsed, setCollapsed] = useState(collapsedProp); // initialize collapsed state
   const [editing, setEditing] = useState(false);
   const [localData, setLocalData] = useState(node.data || "");
   const [oldData, setOldData] = useState(node.data || "");
   const [oldName, setOldName] = useState(node.name);
 
-  // --- handle data editing ---
-  const handleDataChange = (e) => {
-    setLocalData(e.target.value);
+  const updateNode = (updatedNode) => {
+    onChange && onChange({ ...updatedNode });
   };
 
-  const handleDataBlur = () => {
-    if (localData.trim() === "") {
-      alert("Data field cannot be empty!");
-      setLocalData(oldData); // revert
-    } else {
-      node.data = localData;
-      setOldData(localData);
-      onChange && onChange();
-    }
-  };
-
-  // --- handle rename ---
-  const handleNameChange = (e) => {
-    node.name = e.target.value;
-    onChange && onChange();
+  // --- handle name editing ---
+  const handleRenameChange = (e) => {
+    updateNode({ ...node, name: e.target.value });
   };
 
   const handleRenameSubmit = (e) => {
     if (e.key === "Enter" || e.type === "blur") {
-      if (node.name.trim() === "") {
-        alert("Tag name cannot be empty!");
-        node.name = oldName; // revert
-        onChange && onChange();
+      if (!node.name.trim()) {
+        alert("Name cannot be empty!");
+        updateNode({ ...node, name: oldName });
       } else {
         setOldName(node.name);
       }
@@ -42,14 +28,36 @@ const TagView = ({ node, onChange }) => {
     }
   };
 
+  // --- handle data editing ---
+  const handleDataChange = (e) => setLocalData(e.target.value);
+
+  const handleDataBlur = () => {
+    if (!localData.trim()) {
+      alert("Data cannot be empty!");
+      setLocalData(oldData);
+      return;
+    }
+    setOldData(localData);
+    updateNode({ ...node, data: localData });
+  };
+
+  // --- add child node ---
   // --- handle add child ---
   const handleAddChild = () => {
-    if (node.data) {
-      delete node.data;
-      node.children = [];
+    const newChild = { name: "New Child", data: "Data" };
+    const newNode = { ...node };
+
+    // if node had data, convert to parent node
+    if ("data" in newNode) {
+      delete newNode.data;
+      newNode.children = [newChild];
+    } else {
+      newNode.children = newNode.children
+        ? [...newNode.children, newChild]
+        : [newChild];
     }
-    node.children.push({ name: "New Child", data: "Data" });
-    onChange && onChange();
+
+    updateNode(newNode);
   };
 
   return (
@@ -66,7 +74,7 @@ const TagView = ({ node, onChange }) => {
           <input
             type="text"
             defaultValue={node.name}
-            onChange={handleNameChange}
+            onChange={handleRenameChange}
             onKeyDown={handleRenameSubmit}
             onBlur={handleRenameSubmit}
             autoFocus
@@ -91,7 +99,7 @@ const TagView = ({ node, onChange }) => {
 
       {!collapsed && (
         <>
-          {"data" in node && (
+          {node.data !== undefined && (
             <input
               type="text"
               value={localData}
@@ -104,7 +112,16 @@ const TagView = ({ node, onChange }) => {
           {node.children && (
             <div className="ml-6 mt-2">
               {node.children.map((child, index) => (
-                <TagView key={index} node={child} onChange={onChange} />
+                <TagView
+                  key={index}
+                  node={child}
+                  onChange={(updatedChild) => {
+                    const updatedChildren = node.children.map((c, i) =>
+                      i === index ? updatedChild : c
+                    );
+                    updateNode({ ...node, children: updatedChildren });
+                  }}
+                />
               ))}
             </div>
           )}
