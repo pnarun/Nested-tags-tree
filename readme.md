@@ -72,13 +72,15 @@ npm start
 Frontend runs on http://localhost:3000
 
 ### 🧩 API Endpoints
+
 Method	Endpoint	Description
-GET	/api/trees	Fetch all root-level trees
-POST	/api/trees/add	Add new tree
-PUT	/api/tags/<id>	Update existing tree
-DELETE	/api/tags/<id>	Delete a tree
-GET	/api/tags	(optional future use)
-🧰 Example JSON Output
+
+1. GET	/api/trees	Fetch all root-level trees
+2. POST	/api/trees/add	Add new tree
+3. PUT	/api/tags/<id>	Update existing tree
+4. DELETE	/api/tags/<id>	Delete a tree (Currently not implemented in Frontend)
+
+### 🧰 Example JSON Output
 {
   "name": "root",
   "children": [
