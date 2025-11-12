@@ -31,44 +31,46 @@ Built with **React (frontend)** + **Flask (backend)** + **MySQL (database)**.
 ## ⚙️ Installation & Setup
 
 ### 🧩 1. Clone the repository
-
+```bash
 git clone https://github.com/pnarun/nested-tags-tree-manager.git
 cd nested-tags-tree-manager
+```
 
 ### 🗄️ 2. Backend setup (Flask)
-
+```bash
 cd backend
 python -m venv venv
 venv\Scripts\activate        # (Windows)
 # or
 source venv/bin/activate     # (macOS/Linux)
-
+```
 Create a .env or config.py inside utils/ folder:
 
 # utils/config.py
+```bash
 MYSQL_USER = "root"
 MYSQL_PASSWORD = "root!123"
 MYSQL_HOST = "localhost"
 MYSQL_DB = "tags_trees"
-
+```
 Then install dependencies:
-
+```bash
 pip install -r ../requirements.txt
-
+```
 Run backend:
-
+```python
 python app.py
-
+```
 Backend runs on http://127.0.0.1:5000
 
 ### 💻 3. Frontend setup (React)
 
 Open another terminal:
-
+```bash
 cd frontend
 npm install
 npm start
-
+```
 Frontend runs on http://localhost:3000
 
 ### 🧩 API Endpoints
@@ -81,6 +83,7 @@ Method	Endpoint	Description
 4. DELETE	/api/tags/<id>	Delete a tree (Currently not implemented in Frontend)
 
 ### 🧰 Example JSON Output
+```json
 {
   "name": "root",
   "children": [
@@ -94,30 +97,22 @@ Method	Endpoint	Description
     { "name": "child2", "data": "c2 World" }
   ]
 }
+```
 
-
-### Screenshots of this APP
-<img width="1920" height="1080" alt="App load page" src="https://github.com/user-attachments/assets/06de1886-ba4e-4045-a459-daf11ea302c1" />
-
-<img width="1920" height="1080" alt="Tree creation page1" src="https://github.com/user-attachments/assets/13cc1f3c-c311-4986-b2a9-06a2b1878711" />
-
-<img width="1920" height="1080" alt="Tree creation page2" src="https://github.com/user-attachments/assets/0a0001e9-254b-4496-8e9b-6339a9e1800d" />
-
-<img width="1920" height="1080" alt="After tree creation page" src="https://github.com/user-attachments/assets/8e1b9a82-3fcb-481c-87af-427034c0d138" />
-
-<img width="1920" height="1080" alt="Add child page1" src="https://github.com/user-attachments/assets/31d86a8c-3114-4398-86b1-0ebf0878d106" />
-
-<img width="1920" height="1080" alt="Add child page2" src="https://github.com/user-attachments/assets/2653ef2a-9bbe-4970-880d-3acd25ea3f5d" />
-
-<img width="1920" height="1080" alt="Tree update page1" src="https://github.com/user-attachments/assets/2e5de664-d4fd-4be5-8514-4add7c6a7226" />
-
-<img width="1920" height="1080" alt="Tree update page2" src="https://github.com/user-attachments/assets/a3d74291-dc52-4594-a628-e3a0333ee088" />
-
-<img width="1920" height="1080" alt="JSON tree display" src="https://github.com/user-attachments/assets/e3aa7a7a-d567-4af7-a8a0-ab4a97fbae01" />
-
-<img width="1920" height="1080" alt="Add new tree page" src="https://github.com/user-attachments/assets/86111a36-240e-4177-aa93-944cd6dc8903" />
-
-<img width="1920" height="1080" alt="Save new tree page" src="https://github.com/user-attachments/assets/f1e846ec-4fd5-44d0-9189-a1f49b5d7433" />
-
-<img width="1920" height="1080" alt="Final app page" src="https://github.com/user-attachments/assets/1d8f5cd0-5f3a-4115-9aa8-3dec33ec0d88" />
-
+### 📸 Screenshots of this App
+🏁 App Load Page
+<p align="center"> <img src="https://github.com/user-attachments/assets/06de1886-ba4e-4045-a459-daf11ea302c1" alt="App load page" width="80%"> </p>
+🌳 Tree Creation
+<p align="center"> <img src="https://github.com/user-attachments/assets/13cc1f3c-c311-4986-b2a9-06a2b1878711" alt="Tree creation page1" width="48%"> <img src="https://github.com/user-attachments/assets/0a0001e9-254b-4496-8e9b-6339a9e1800d" alt="Tree creation page2" width="48%"> </p>
+🌱 After Tree Creation
+<p align="center"> <img src="https://github.com/user-attachments/assets/8e1b9a82-3fcb-481c-87af-427034c0d138" alt="After tree creation page" width="80%"> </p>
+🌿 Add Child Nodes
+<p align="center"> <img src="https://github.com/user-attachments/assets/31d86a8c-3114-4398-86b1-0ebf0878d106" alt="Add child page1" width="48%"> <img src="https://github.com/user-attachments/assets/2653ef2a-9bbe-4970-880d-3acd25ea3f5d" alt="Add child page2" width="48%"> </p>
+🧩 Update Tree
+<p align="center"> <img src="https://github.com/user-attachments/assets/2e5de664-d4fd-4be5-8514-4add7c6a7226" alt="Tree update page1" width="48%"> <img src="https://github.com/user-attachments/assets/a3d74291-dc52-4594-a628-e3a0333ee088" alt="Tree update page2" width="48%"> </p>
+🧾 JSON Tree Display
+<p align="center"> <img src="https://github.com/user-attachments/assets/e3aa7a7a-d567-4af7-a8a0-ab4a97fbae01" alt="JSON tree display" width="80%"> </p>
+🌲 Add & Save New Tree
+<p align="center"> <img src="https://github.com/user-attachments/assets/86111a36-240e-4177-aa93-944cd6dc8903" alt="Add new tree page" width="48%"> <img src="https://github.com/user-attachments/assets/f1e846ec-4fd5-44d0-9189-a1f49b5d7433" alt="Save new tree page" width="48%"> </p>
+✅ Final App View
+<p align="center"> <img src="https://github.com/user-attachments/assets/1d8f5cd0-5f3a-4115-9aa8-3dec33ec0d88" alt="Final app page" width="80%"> </p>
