@@ -1,38 +1,26 @@
 import React, { useState, useEffect } from "react";
 import TagView from "./components/TagView";
-
-/**
- * Robust App.js that:
- * - Handles multiple backend shapes (tree/tree_json/tree_data)
- * - Prevents double Add Tree prompts
- * - Tries multiple save formats for compatibility
- */
-
-const API_BASE = "http://127.0.0.1:5000/api";
+import { BACKEND_API } from "./utils/constants";
 
 function App() {
-  const [trees, setTrees] = useState([]); // each item: { id, name, tree } where tree is the root node object
+  const [trees, setTrees] = useState([]);
   const [exportedData, setExportedData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [adding, setAdding] = useState(false); // disable Add button while posting
+  const [adding, setAdding] = useState(false);
   const [lastSavedTreeId, setLastSavedTreeId] = useState(null);
 
   useEffect(() => {
     loadTrees();
-    // eslint-disable-next-line
   }, []);
 
-  // --- load and normalize trees from backend ---
+  // Load and normalize trees from backend
   async function loadTrees() {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/trees`);
+      const res = await fetch(`${BACKEND_API}/trees`);
       if (!res.ok) throw new Error("Failed to fetch trees");
       const data = await res.json();
-
-      // data can be array of various shapes, normalize to { id, name, tree }
       const normalized = data.map((item) => {
-        // if backend returned { id, name, tree } already
         if (item.tree) {
           return {
             id: item.id,
@@ -40,7 +28,6 @@ function App() {
             tree: item.tree,
           };
         }
-        // if backend returned { id, tree_json } (string)
         if (item.tree_json) {
           try {
             const parsed =
@@ -60,7 +47,6 @@ function App() {
             };
           }
         }
-        // if backend returned { id, tree_data } (json)
         if (item.tree_data) {
           return {
             id: item.id,
@@ -68,8 +54,6 @@ function App() {
             tree: item.tree_data,
           };
         }
-        // fallback: maybe the backend returned raw tree objects in the list
-        // handle shape: { id, name, children/data }
         return { id: item.id, name: item.name || item.name, tree: { ...item } };
       });
 
@@ -82,35 +66,33 @@ function App() {
     }
   }
 
-  // --- Add new tree (robust payload) ---
+  // Add new tree
   const handleAddTree = () => {
-  const rootName = prompt("Enter root name for the new tree:", "Root Node");
-  if (!rootName) return;
+    let rootName = prompt("Enter root name of a tree.", "Root Node");
+    if (!rootName) return;
 
-  // Define default tree structure
-  const newTree = {
-    name: rootName,
-    children: [
-      { name: "Child 1", data: "Data for child 1" }
-    ]
+    // Default tree structure
+    const newTree = {
+      name: rootName,
+      children: [{ name: "New Child", data: "Data" }],
+    };
+
+    fetch(`${BACKEND_API}/trees/add`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newTree),
+    })
+      .then((res) => res.json())
+      .then((savedTree) => {
+        alert("✅ A new tree is created Successfully!");
+        setExportedData(null);
+        setLastSavedTreeId(savedTree.id);
+        loadTrees();
+      })
+      .catch((err) => console.error("Error adding tree:", err));
   };
 
-  fetch("http://127.0.0.1:5000/api/trees/add", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(newTree),
-  })
-    .then((res) => res.json())
-    .then((savedTree) => {
-      alert("✅ New tree added!");
-      setExportedData(null); // clear export section
-      setLastSavedTreeId(savedTree.id); // expand the new tree
-      loadTrees();
-    })
-    .catch((err) => console.error("Error adding tree:", err));
-};
-
-  // --- clean tree before saving (children XOR data enforced) ---
+  // clean tree before saving (children XOR data enforced)
   const cleanTree = (node) => {
     const cleaned = { name: node.name };
     if (node.children && node.children.length > 0) {
@@ -125,18 +107,18 @@ function App() {
     return cleaned;
   };
 
-  // --- Save/Export with multiple backend-format attempts (robust) ---
+  // Save/Export with multiple backend-format attempts (robust)
   const handleExport = async (treeObj, id) => {
     const cleaned = cleanTree(treeObj);
-    setExportedData(cleaned); // show JSON
+    setExportedData(cleaned);
 
     const attempts = [
       {
-        url: `${API_BASE}/trees/${id}`,
+        url: `${BACKEND_API}/trees/${id}`,
         body: { tree_json: JSON.stringify(cleaned) },
       },
-      { url: `${API_BASE}/trees/${id}`, body: cleaned },
-      { url: `${API_BASE}/tags/${id}`, body: cleaned },
+      { url: `${BACKEND_API}/trees/${id}`, body: cleaned },
+      { url: `${BACKEND_API}/tags/${id}`, body: cleaned },
     ];
 
     let success = false;
@@ -158,35 +140,30 @@ function App() {
 
     if (success) {
       alert("✅ Tree saved successfully!");
-      setLastSavedTreeId(id); // mark this tree as last saved
+      setLastSavedTreeId(id);
       await loadTrees();
     } else {
       alert("❌ Failed to save tree. Check backend / console.");
     }
   };
 
-  // --- Update local tree state when TagView calls onChange(updatedNode) ---
+  // Update local tree state when TagView calls onChange(updatedNode)
   const handleTreeChange = (updatedTree, index) => {
     setTrees((prev) => {
       const updated = [...prev];
-      // make sure we keep id & name field consistent
       updated[index] = {
         ...(updated[index] || {}),
         tree: updatedTree,
         name: updatedTree.name,
         id: updated[index]?.id,
       };
-      // For compatibility, place tree object as root for TagView use:
-      // But our TagView expects node directly — so feed TagView the tree object below.
       return updated;
     });
   };
 
-  // Helper to extract node passed into TagView: in our normalized array, item.tree is root object
+  // Helper to extract node passed into TagView
   const getNodeForRender = (item) => {
-    // some previous versions stored root directly at top-level — be defensive
     if (item.tree) return item.tree;
-    // if item itself looks like tree:
     if (item.name && (item.children || item.data !== undefined)) return item;
     return { name: item.name || "Root", children: item.children || [] };
   };
@@ -198,7 +175,6 @@ function App() {
         🌳 Nested Tags Tree Manager
       </h1>
 
-      {/* single Add Tree button (guarded) */}
       <button
         onClick={handleAddTree}
         disabled={adding}
@@ -220,14 +196,13 @@ function App() {
           const node = getNodeForRender(item);
           const id = item.id;
 
-          // Determine if this tree should be collapsed
           const isCollapsed = id !== lastSavedTreeId;
 
           return (
             <div key={id || idx} className="mb-8 border-b pb-4">
               <TagView
                 node={node}
-                collapsed={isCollapsed} // <-- pass prop
+                collapsed={isCollapsed}
                 onChange={(updatedNode) => handleTreeChange(updatedNode, idx)}
               />
               <button
@@ -241,7 +216,6 @@ function App() {
         })
       )}
 
-      {/* JSON only when exported */}
       {exportedData && (
         <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow-inner">
           <h2 className="text-xl font-semibold mb-2 text-gray-700">

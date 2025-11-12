@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const TagView = ({ node, onChange, collapsed: collapsedProp = false }) => {
-  const [collapsed, setCollapsed] = useState(collapsedProp); // initialize collapsed state
+  const [collapsed, setCollapsed] = useState(collapsedProp); 
   const [editing, setEditing] = useState(false);
   const [localData, setLocalData] = useState(node.data || "");
   const [oldData, setOldData] = useState(node.data || "");
@@ -11,7 +11,7 @@ const TagView = ({ node, onChange, collapsed: collapsedProp = false }) => {
     onChange && onChange({ ...updatedNode });
   };
 
-  // --- handle name editing ---
+  // Handle name editing
   const handleRenameChange = (e) => {
     updateNode({ ...node, name: e.target.value });
   };
@@ -28,7 +28,7 @@ const TagView = ({ node, onChange, collapsed: collapsedProp = false }) => {
     }
   };
 
-  // --- handle data editing ---
+  // Handle data editing
   const handleDataChange = (e) => setLocalData(e.target.value);
 
   const handleDataBlur = () => {
@@ -41,8 +41,7 @@ const TagView = ({ node, onChange, collapsed: collapsedProp = false }) => {
     updateNode({ ...node, data: localData });
   };
 
-  // --- add child node ---
-  // --- handle add child ---
+  // Handle add child ---
   const handleAddChild = () => {
     const newChild = { name: "New Child", data: "Data" };
     const newNode = { ...node };
